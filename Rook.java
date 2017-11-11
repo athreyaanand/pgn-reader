@@ -1,7 +1,6 @@
 public class Rook extends Piece {
-
-    public Rook(Color color) {
-        super(color);
+    public Rook(Color c) {
+        super(c);
     }
 
     public String algebraicName() {
@@ -9,46 +8,36 @@ public class Rook extends Piece {
     }
 
     public String fenName() {
-        return color.equals(Color.WHITE) ? "R" : "r";
+        return getColor() == Color.WHITE ? "R" : "r";
     }
 
     public Square[] movesFrom(Square square) {
-        int squareCount = 0;
-        int[] pRanks = new int[16];
-        int[] pFiles = new int[16];
-        int iFile = (int) square.getFile() - 7;
-        int iRank = (int) square.getRank() - 7;
-        for (int i = 0; i < 8; i++) {
-            if (isRankFileValid(iFile + i, (int) square.getRank())
-                && !square.equals(new Square((char) (iFile + i),
-                                             square.getRank()))) {
-                pRanks[i] = (int) square.getRank();
-                pFiles[i] = iFile + i;
-                squareCount++;
+        Square[] sq = new Square[27];
+        int counter = 0;
+        char rank = square.getRank();
+        char file = square.getFile();
+        for (int i = 1; i <= 8; i++) {
+            char[] ranks = new char[]{(char) (rank + i), (char) (rank - i)};
+            char[] files = new char[]{(char) (file + i), (char) (file - i)};
+            if (isInBoard(files[0], rank)) {
+                sq[counter++] = new Square(files[0], rank);
             }
+            if (isInBoard(files[1], rank)) {
+                sq[counter++] = new Square(files[1], rank);
+            }
+            if (isInBoard(file, ranks[0])) {
+                sq[counter++] = new Square(file, ranks[0]);
+            }
+            if (isInBoard(file, ranks[1])) {
+                sq[counter++] = new Square(file, ranks[1]);
+            }
+        }
 
-            if (isRankFileValid((int) square.getFile(), iRank + i)
-                && !square.equals(new Square(square.getFile(),
-                                            (char) (iRank + i)))) {
-                pRanks[i * 2] = iRank + i;
-                pFiles[i * 2] = (int) square.getFile();
-                squareCount++;
-            }
+        Square[] full = new Square[counter];
+        for (int i = 0; i < counter; i++) {
+            full[i] = sq[i];
         }
-        Square[] moveSquares = new Square[squareCount];
-        for (int j = 0; j < pRanks.length; j++) {
-            if (pRanks[j] != 0) {
-                moveSquares[squareCount - 1] = new Square((char) pFiles[j],
-                                                          (char) pRanks[j]);
-            }
-        }
-        return moveSquares;
-    }
 
-    private boolean isRankFileValid(int file, int rank) {
-        if ((rank > 96 && rank < 105) && (file > 48 && file < 57)) {
-            return true;
-        }
-        return false;
+        return full;
     }
 }
