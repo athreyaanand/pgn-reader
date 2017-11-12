@@ -28,7 +28,8 @@ public class ChessGame {
      * @return a filtered list
      */
     public List<Move> filter(Predicate<Move> filter) {
-        return moves;
+      return moves.stream().filter(predicate)
+             .collect(Collectors.<Move>toList());
     }
 
     /**
