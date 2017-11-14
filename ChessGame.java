@@ -1,6 +1,20 @@
-public class ChessGame {
-    List<Move> moves;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
+/**
+ * Represents a class that uses Move and Ply to create ChessGame
+ *
+ * @author aanand76
+ * @version 1.0
+ */
+public class ChessGame {
+    private List<Move> moves;
+
+    /**
+     * an argument constructor for ChessGame
+     * @param  moves is a list of moves in the game
+     */
     public ChessGame(List<Move> moves) {
         this.moves = moves;
     }
@@ -15,21 +29,20 @@ public class ChessGame {
 
     /**
      * Gets nth move.
-     * @param  int n tells which move
+     * @param  n tells which move
      * @return the move in the list associated with the nth move
      */
     public Move getMove(int n) {
-        return moves.get(n - 1);
+        return moves.get(n);
     }
 
     /**
      * Returns a list filtered by the predicate. Must not change moves field.
-     * @param Predicate<Move> filter filters the moves list
+     * @param filter is a predicate that filters the moves list
      * @return a filtered list
      */
     public List<Move> filter(Predicate<Move> filter) {
-      return moves.stream().filter(predicate)
-             .collect(Collectors.<Move>toList());
+        return moves.stream().filter(filter).collect(Collectors.<Move>toList());
     }
 
     /**
@@ -37,7 +50,8 @@ public class ChessGame {
      * @return a list of moves with commented Plys
      */
     public List<Move> getMovesWithComment() {
-        return moves;
+        return filter((Move s) -> s.getBlackPly().getComment().isPresent()
+                      || s.getBlackPly().getComment().isPresent());
     }
 
     /**
@@ -45,15 +59,27 @@ public class ChessGame {
      * @return a list of moves without commented Plys
      */
     public List<Move> getMovesWithoutComment() {
-        return moves;
+        return filter(new Predicate<Move>() {
+            public boolean test(Move m) {
+                return !m.getBlackPly().getComment().isPresent()
+                       || !m.getBlackPly().getComment().isPresent();
+            }
+        });
     }
 
     /**
      * Returns a list of moves with a piece of this type;
-     * @param Piece P that reveals what piece the moves should contain
+     * @param p that reveals what piece the moves should contain
      * @return a list of plies with this move
      */
-    public List<Move> getMovesWithPiece(Piece P) {
-        return moves;
+    public List<Move> getMovesWithPiece(Piece p) {
+        class PieceContainer implements Predicate<Move> {
+            public boolean test(Move m) {
+                return p.algebraicName().equals(m.getWhitePly()
+                        .getPiece().algebraicName()) || p.algebraicName()
+                        .equals(m.getBlackPly().getPiece().algebraicName());
+            }
+        }
+        return filter(new PieceContainer());
     }
 }
