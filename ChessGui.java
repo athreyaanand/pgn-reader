@@ -16,14 +16,23 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 
+/**
+ * A GUI for all ChessGames
+ *
+ * @author aanand76
+ * @version 1.0
+ */
 public class ChessGui extends Application {
     private TextField filterField;
 
+    /**
+     * the start method of application
+     * @param stage to display/work
+     */
     @Override
     public void start(Stage stage) {
         ChessDb chessDb = new ChessDb();
         filterField = new TextField();
-        filterField.setInputPrompt("Search");
         ObservableList<ChessGame> games =
             FXCollections.observableArrayList(chessDb.getGames());
         TableView<ChessGame> table = createTable(games);
@@ -34,7 +43,8 @@ public class ChessGui extends Application {
                 viewDialog(game);
             });
         viewButton.disableProperty()
-            .bind(Bindings.isNull(table.getSelectionModel().selectedItemProperty()));
+            .bind(Bindings.isNull(table.getSelectionModel()
+                                       .selectedItemProperty()));
 
         Button dismissButton = new Button("Dismiss");
         dismissButton.setOnAction(e -> Platform.exit());
@@ -50,6 +60,11 @@ public class ChessGui extends Application {
         stage.show();
     }
 
+    /**
+     * generates TableView in which ChessGames are displayed
+     * @param  games list of ChessGames to be added to TableView
+     * @return a TableView containing all ChessGames
+     */
     private TableView<ChessGame> createTable(ObservableList<ChessGame> games) {
         TableView<ChessGame> table = new TableView<ChessGame>();
         table.setItems(games);
@@ -85,34 +100,43 @@ public class ChessGui extends Application {
         table.getColumns().setAll(eventCol, siteCol, dateCol,
                                   whiteCol, blackCol, resultCol, openingCol);
 
-        FilteredList<ChessGame> filteredData = new FilteredList<>(games, p -> true);
+        FilteredList<ChessGame> filteredData = new FilteredList<>(games,
+                                                                  p -> true);
 
-        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(ChessGame -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
+        filterField.textProperty().addListener((observable,
+                                                oldValue, newValue) -> {
+                filteredData.setPredicate(ChessGame -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return true;
+                        }
 
-                String value = newValue.toLowerCase();
+                        String value = newValue.toLowerCase();
 
-                if (ChessGame.getEvent().toLowerCase().contains(value)) {
-                    return true;
-                } else if (ChessGame.getSite().toLowerCase().contains(value)) {
-                    return true;
-                } else if (ChessGame.getDate().toLowerCase().contains(value)) {
-                    return true;
-                } else if (ChessGame.getWhite().toLowerCase().contains(value)) {
-                    return true;
-                } else if (ChessGame.getBlack().toLowerCase().contains(value)) {
-                    return true;
-                } else if (ChessGame.getResult().toLowerCase().contains(value)) {
-                    return true;
-                } else if (ChessGame.getOpening().toLowerCase().contains(value)) {
-                    return true;
-                }
-                return false;
+                        if (ChessGame.getEvent().toLowerCase()
+                                                .contains(value)) {
+                            return true;
+                        } else if (ChessGame.getSite().toLowerCase()
+                                                      .contains(value)) {
+                            return true;
+                        } else if (ChessGame.getDate().toLowerCase()
+                                                      .contains(value)) {
+                            return true;
+                        } else if (ChessGame.getWhite().toLowerCase()
+                                                       .contains(value)) {
+                            return true;
+                        } else if (ChessGame.getBlack().toLowerCase()
+                                                       .contains(value)) {
+                            return true;
+                        } else if (ChessGame.getResult().toLowerCase()
+                                                        .contains(value)) {
+                            return true;
+                        } else if (ChessGame.getOpening().toLowerCase()
+                                                         .contains(value)) {
+                            return true;
+                        }
+                        return false;
+                    });
             });
-        });
 
         SortedList<ChessGame> sortedData = new SortedList<>(filteredData);
 
@@ -123,10 +147,16 @@ public class ChessGui extends Application {
         return table;
     }
 
+    /**
+     * [viewDialog description]
+     * @param ChessGame cg [description]
+     */
     private void viewDialog(ChessGame cg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(cg.getEvent());
-        alert.setHeaderText(String.format("Site: %s%nDate: %s%nWhite: %s%nBlack: %s%nResult: %s%nOpening: %s",
+        String formatStr1 = "Site: %s%nDate: %s%nWhite: %s%nBlack: ";
+        String formatStr2 = "%s%nResult: %s%nOpening: %s";
+        alert.setHeaderText(String.format(formatStr1 + formatStr2,
                                           cg.getSite(), cg.getDate(),
                                           cg.getWhite(), cg.getBlack(),
                                           cg.getResult(), cg.getOpening()));

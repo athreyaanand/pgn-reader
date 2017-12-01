@@ -122,7 +122,7 @@ public class ChessDb {
      * Adds PGN files as ChessGames to DB
      * @param chessGames is the current list of ChessGames that we add to
      */
-    private void addPgns(List<ChessGame> chessGames) {
+    private void addPgns(List chessGames) {
         List<String> textFiles = new ArrayList<String>();
         File dir = new File(".");
         for (File file : dir.listFiles()) {
@@ -164,8 +164,8 @@ public class ChessDb {
         String result = tagValue("Result", game);
 
         ChessGame cg = new ChessGame(event, site, date, white, black, result);
-        addMoves(cg, game.substring(game.lastIndexOf(']') + 3)
-                                        .replaceAll("[\r\n] + ", " "));
+        addMoves(cg, game.substring(game.lastIndexOf(']')+3)
+                                        .replaceAll("[\r\n]+", " "));
         return cg;
     }
 
@@ -175,7 +175,6 @@ public class ChessDb {
      * @param game the list of moves formatted with turn numbers
      */
     private void addMoves(ChessGame cg, String game) {
-        System.out.println(game);
         int turn = 1;
         while (!turnValue(turn + ". ", game).equals("INVALID")) {
             cg.addMove(turnValue(turn + ". ", game));
@@ -212,7 +211,7 @@ public class ChessDb {
         int index = game.indexOf(turn);
 
         if (index > -1) {
-            turnVal = game.substring(index + 3, game.indexOf(" ", index + 6));
+            turnVal = game.substring(index + 3, game.indexOf(" ", index + 4));
         }
 
         return (turnVal.trim());
