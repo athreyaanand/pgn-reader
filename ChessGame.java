@@ -3,6 +3,12 @@ import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * Represents a ChessGame
+ *
+ * @author aanand76
+ * @version 1.0
+ */
 public class ChessGame {
 
     private StringProperty event = new SimpleStringProperty(this, "NA");
@@ -13,6 +19,15 @@ public class ChessGame {
     private StringProperty result = new SimpleStringProperty(this, "NA");
     private List<String> moves;
 
+    /**
+     * an arg constructor for ChessGame
+     * @param  event name of event
+     * @param  site location of game
+     * @param  date date of game
+     * @param  white white player name
+     * @param  black black player name
+     * @param  result final result of game
+     */
     public ChessGame(String event, String site, String date,
                      String white, String black, String result) {
         this.event.set(event);
@@ -24,10 +39,19 @@ public class ChessGame {
         moves = new ArrayList<>();
     }
 
+    /**
+     * adds move to ChessGame
+     * @param move needed to be added
+     */
     public void addMove(String move) {
         moves.add(move);
     }
 
+    /**
+     * gets move in a certain location
+     * @param n number location within list of moves
+     * @return a string with the move required
+     */
     public String getMove(int n) {
         return moves.get(n - 1);
     }
@@ -62,7 +86,6 @@ public class ChessGame {
 
     public String getOpening() {
         String moveStr = "1. " + getMove(1) + " 2. " + getMove(2) + " 3. "+getMove(3);
-        System.out.println(moveStr);
         if (moveStr.contains("1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5")) {
             return("Giuoco Piano");
         } else if (moveStr.contains("1. e4 e5 2. Nf3 Nc6 3. Bb5")) {
