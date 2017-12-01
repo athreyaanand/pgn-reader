@@ -1,85 +1,81 @@
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.function.Predicate;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
-/**
- * Represents a class that uses Move and Ply to create ChessGame
- *
- * @author aanand76
- * @version 1.0
- */
 public class ChessGame {
-    private List<Move> moves;
 
-    /**
-     * an argument constructor for ChessGame
-     * @param  moves is a list of moves in the game
-     */
-    public ChessGame(List<Move> moves) {
-        this.moves = moves;
+    private StringProperty event = new SimpleStringProperty(this, "NA");
+    private StringProperty site = new SimpleStringProperty(this, "NA");
+    private StringProperty date = new SimpleStringProperty(this, "NA");
+    private StringProperty white = new SimpleStringProperty(this, "NA");
+    private StringProperty black = new SimpleStringProperty(this, "NA");
+    private StringProperty result = new SimpleStringProperty(this, "NA");
+    private List<String> moves;
+
+    public ChessGame(String event, String site, String date,
+                     String white, String black, String result) {
+        this.event.set(event);
+        this.site.set(site);
+        this.date.set(date);
+        this.white.set(white);
+        this.black.set(black);
+        this.result.set(result);
+        moves = new ArrayList<>();
     }
 
-    /**
-     * Return all moves.
-     * @return a list containing all moves of a game
-     */
-    public List<Move> getMoves() {
-        return moves;
+    public void addMove(String move) {
+        moves.add(move);
     }
 
-    /**
-     * Gets nth move.
-     * @param  n tells which move
-     * @return the move in the list associated with the nth move
-     */
-    public Move getMove(int n) {
-        return moves.get(n);
+    public String getMove(int n) {
+        return moves.get(n - 1);
     }
 
-    /**
-     * Returns a list filtered by the predicate. Must not change moves field.
-     * @param filter is a predicate that filters the moves list
-     * @return a filtered list
-     */
-    public List<Move> filter(Predicate<Move> filter) {
-        return moves.stream().filter(filter).collect(Collectors.<Move>toList());
+    public String getMoves() {
+        return moves.toString();
     }
 
-    /**
-     * Returns a list of moves with comments.
-     * @return a list of moves with commented Plys
-     */
-    public List<Move> getMovesWithComment() {
-        return filter((Move s) -> s.getBlackPly().getComment().isPresent()
-                      || s.getBlackPly().getComment().isPresent());
+    public String getEvent() {
+        return event.get();
     }
 
-    /**
-     * Returns a list of moves without comments.
-     * @return a list of moves without commented Plys
-     */
-    public List<Move> getMovesWithoutComment() {
-        return filter(new Predicate<Move>() {
-            public boolean test(Move m) {
-                return !m.getBlackPly().getComment().isPresent()
-                       || !m.getBlackPly().getComment().isPresent();
-            }
-        });
+    public String getSite() {
+        return site.get();
     }
 
-    /**
-     * Returns a list of moves with a piece of this type;
-     * @param p that reveals what piece the moves should contain
-     * @return a list of plies with this move
-     */
-    public List<Move> getMovesWithPiece(Piece p) {
-        class PieceContainer implements Predicate<Move> {
-            public boolean test(Move m) {
-                return p.algebraicName().equals(m.getWhitePly()
-                        .getPiece().algebraicName()) || p.algebraicName()
-                        .equals(m.getBlackPly().getPiece().algebraicName());
-            }
+    public String getDate() {
+        return date.get();
+    }
+
+    public String getWhite() {
+        return white.get();
+    }
+
+    public String getBlack() {
+        return black.get();
+    }
+
+    public String getResult() {
+        return result.get();
+    }
+
+    public String getOpening() {
+        String moveStr = "1. " + getMove(1) + " 2. " + getMove(2) + " 3. "+getMove(3);
+        System.out.println(moveStr);
+        if (moveStr.contains("1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5")) {
+            return("Giuoco Piano");
+        } else if (moveStr.contains("1. e4 e5 2. Nf3 Nc6 3. Bb5")) {
+            return("Ruy Lopez");
+        } else if (moveStr.contains("1. e4 c5")) {
+            return("Sicilian Defence");
+        } else if (moveStr.contains("1. d4 d5 2. c4")) {
+            return("Queen's Gambit");
+        } else if (moveStr.contains("1. d4 Nf6")) {
+            return("Indian defence");
+        } else if (moveStr.contains("1. e4 e5 2. Nf3 d6")) {
+            return("Philidor Defence");
         }
-        return filter(new PieceContainer());
+        return "N/A";
     }
 }
